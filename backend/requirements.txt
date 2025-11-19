@@ -1,0 +1,12 @@
+fastapi==0.99.1
+uvicorn
+aiosqlite
+httpx
+prisma==0.15.0
+prisma-client==0.2.1
+python-dotenv==1.2.1
+scikit-learn
+PyPDF2
+python-docx
+python-multipart
+passlib[bcrypt]

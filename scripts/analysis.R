@@ -1,0 +1,13 @@
+args <- commandArgs(trailingOnly=TRUE)
+input <- args[1]
+DF <- read.csv(input)
+suppressMessages(library(ggplot2))
+agg <- aggregate(cbind(stress, focus) ~ user, DF, mean)
+p <- ggplot(agg, aes(x=stress, y=focus)) + geom_point(color="#4F46E5") + theme_minimal()
+tmp <- tempfile(fileext = ".png")
+ggsave(tmp, plot=p, width=6, height=4)
+img <- file(tmp, "rb")
+raw <- readBin(img, what="raw", n=file.info(tmp)$size)
+close(img)
+enc <- base64enc::base64encode(raw)
+cat(enc)

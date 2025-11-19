@@ -1,0 +1,4 @@
+# Prisma Migrate lockfile
+# This file was generated manually because migrations were authored via `migrate diff`.
+provider = "sqlite"
+

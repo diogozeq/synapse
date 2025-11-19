@@ -1,0 +1,305 @@
+generator client_py {
+  provider = "prisma-client-py"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Area {
+  id           String   @id @default(uuid())
+  nome         String   @unique
+  descricao    String?
+  equipes      Equipe[]
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  @@map("areas")
+}
+
+model Equipe {
+  id           String   @id @default(uuid())
+  nome         String
+  descricao    String?  // Deprecated: use area relation
+
+  idArea       String?
+  area         Area?    @relation(fields: [idArea], references: [id])
+
+  idGestor     String?
+  gestor       Usuario? @relation("EquipeGestor", fields: [idGestor], references: [id])
+
+  usuarios     Usuario[]
+  cargos       Cargo[]  // NEW: Roles belong to teams
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  @@map("equipes")
+}
+
+model Cargo {
+  id        String    @id @default(uuid())
+  nome      String
+  descricao String?
+
+  idEquipe  String?
+  equipe    Equipe?   @relation(fields: [idEquipe], references: [id])
+
+  usuarios  Usuario[]
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @default(now()) @updatedAt
+
+  @@unique([nome, idEquipe])  // Role name unique per team
+  @@map("cargos")
+}
+
+model Usuario {
+  id           String   @id @default(uuid())
+  nome         String
+  email        String   @unique
+  hashSenha    String
+
+  cpf          String   @unique
+  avatarUrl    String?
+
+  papel        String   @default("COLABORADOR")
+
+  idEquipe     String?
+  equipe       Equipe?      @relation(fields: [idEquipe], references: [id])
+
+  idCargo      String?
+  cargoRef     Cargo?       @relation(fields: [idCargo], references: [id])
+  cargo        String?
+
+  totalXp       Int      @default(0)
+  nivel         Int      @default(1)
+  diasSequencia Int      @default(0)
+
+  aceitouTermos             Boolean @default(false)
+  preferenciaAcessibilidade String?
+
+  matriculas     Matricula[]
+  checkInsBio    CheckInBio[]
+  sessoes        SessaoAprendizado[]
+  interacoes     Interacao[]
+  logsAuditoria  LogAuditoria[]
+  uploads        MaterialFonte[]  @relation("Uploads")
+  revisoes       RevisaoSR[]
+  equipesGerenciadas Equipe[] @relation("EquipeGestor")
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  @@map("usuarios")
+}
+
+model Tag {
+  id        String          @id @default(uuid())
+  nome      String          @unique
+  materiais MaterialTag[]
+
+  @@map("tags")
+}
+
+model MaterialFonte {
+  id               String   @id @default(uuid())
+  titulo           String
+  descricao        String?
+  categoria        String?
+  tipoCurso        String?
+  thumbnailUrl     String?
+
+  urlArquivo       String
+  tipoArquivo      String
+  textoExtraido    String?
+
+  statusProcessamento String @default("CONCLUIDO")
+
+  idUsuarioUpload  String?
+  usuarioUpload    Usuario? @relation("Uploads", fields: [idUsuarioUpload], references: [id])
+
+  matriculas       Matricula[]
+  atividades       AtividadeAprendizado[]
+  competencias     MaterialCompetencia[]
+  tags             MaterialTag[]
+
+  criadoEm         DateTime @default(now())
+  atualizadoEm     DateTime @updatedAt
+
+  @@map("materiais_fonte")
+}
+
+model MaterialTag {
+  idMaterial String
+  idTag      String
+
+  material   MaterialFonte @relation(fields: [idMaterial], references: [id], onDelete: Cascade)
+  tag        Tag           @relation(fields: [idTag], references: [id], onDelete: Cascade)
+
+  @@id([idMaterial, idTag])
+  @@map("materiais_tags")
+}
+
+model AtividadeAprendizado {
+  id              String        @id @default(uuid())
+  idMaterialFonte String
+  materialFonte   MaterialFonte @relation(fields: [idMaterialFonte], references: [id], onDelete: Cascade)
+
+  tipo            String      @default("RESUMO")
+  conteudo        String
+
+  xpReward        Int     @default(10)
+  tempoEstimadoMin Int    @default(5)
+  ordem           Int     @default(0)
+  avaliativa      Boolean @default(false)
+
+  interacoes      Interacao[]
+  revisoes        RevisaoSR[]
+
+  criadoEm        DateTime @default(now())
+
+  @@map("atividades_aprendizado")
+}
+
+model Competencia {
+  id        String                @id @default(uuid())
+  nome      String                @unique
+  materiais MaterialCompetencia[]
+
+  @@map("competencias")
+}
+
+model MaterialCompetencia {
+  idMaterial    String
+  idCompetencia String
+
+  material      MaterialFonte @relation(fields: [idMaterial], references: [id], onDelete: Cascade)
+  competencia   Competencia   @relation(fields: [idCompetencia], references: [id], onDelete: Cascade)
+
+  @@id([idMaterial, idCompetencia])
+  @@map("materiais_competencias")
+}
+
+model Matricula {
+  id        String   @id @default(uuid())
+
+  idUsuario String
+  usuario   Usuario  @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
+
+  idCurso   String
+  curso     MaterialFonte @relation(fields: [idCurso], references: [id], onDelete: Cascade)
+
+  status       String   @default("NAO_INICIADO")
+  progresso    Int      @default(0)
+  notaFinal    Float?
+  ehObrigatorio Boolean @default(false)
+
+  atribuidoEm  DateTime @default(now())
+  prazo        DateTime
+  ultimoAcesso DateTime @default(now())
+
+  @@index([idUsuario, status])
+  @@map("matriculas")
+}
+
+model CheckInBio {
+  id        String  @id @default(uuid())
+  idUsuario String
+  usuario   Usuario @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
+
+  horasSono      Float?
+  qualidadeSono  Int?
+  nivelFoco      Int
+  nivelEstresse  Int
+  nivelFadiga    Int?
+
+  origemDados       String  @default("SIMULACAO")
+  dadosBrutosSensor String?
+
+  dataHora    DateTime @default(now())
+  diaDaSemana Int
+  horaDoDia   Int
+
+  sessao      SessaoAprendizado? @relation("CheckInSessao")
+
+  @@index([idUsuario, dataHora])
+  @@map("checkins_bio")
+}
+
+model SessaoAprendizado {
+  id        String @id @default(uuid())
+
+  idUsuario String
+  usuario   Usuario @relation(fields: [idUsuario], references: [id])
+
+  idCheckInBio String? @unique
+  checkInBio   CheckInBio? @relation("CheckInSessao", fields: [idCheckInBio], references: [id])
+
+  modoRecomendado String
+
+  iniciadoEm  DateTime  @default(now())
+  concluidoEm DateTime?
+
+  interacoes Interacao[]
+
+  @@map("sessoes_aprendizado")
+}
+
+model Interacao {
+  id        String @id @default(uuid())
+
+  idUsuario String
+  usuario   Usuario @relation(fields: [idUsuario], references: [id])
+
+  idSessao  String?
+  sessao    SessaoAprendizado? @relation(fields: [idSessao], references: [id])
+
+  idAtividade String
+  atividade   AtividadeAprendizado @relation(fields: [idAtividade], references: [id])
+
+  estaCorreto     Boolean?
+  tempoRespostaMs Int
+  tentativas      Int      @default(1)
+
+  criadoEm DateTime @default(now())
+
+  @@index([idUsuario])
+  @@map("interacoes")
+}
+
+model RevisaoSR {
+  id             String   @id @default(uuid())
+
+  idUsuario      String
+  usuario        Usuario  @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
+
+  idAtividade    String
+  atividade      AtividadeAprendizado @relation(fields: [idAtividade], references: [id], onDelete: Cascade)
+
+  easinessFactor Float    @default(2.5)
+  intervalo      Int      @default(0)
+  repeticoes     Int      @default(0)
+  ultimaRevisao  DateTime?
+  proximaRevisao DateTime?
+
+  @@index([idUsuario, idAtividade])
+  @@map("revisoes_sr")
+}
+
+model LogAuditoria {
+  id        String   @id @default(uuid())
+
+  idUsuario String?
+  usuario   Usuario? @relation(fields: [idUsuario], references: [id])
+
+  acao      String
+  detalhes  String?
+  ipOrigem  String?
+
+  dataHora  DateTime @default(now())
+
+  @@map("logs_auditoria")
+}

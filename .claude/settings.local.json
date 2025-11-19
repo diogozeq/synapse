@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tailwindcss:*)",
+      "Bash(npm ls:*)",
+      "Bash(if exist node_modules.vite rmdir /s /q node_modules.vite)",
+      "Bash(wc:*)",
+      "Bash(python backend.py:*)",
+      "Bash(prisma generate:*)",
+      "Bash(findstr:*)",
+      "Bash(python -m prisma:*)",
+      "Bash(pip uninstall:*)",
+      "Bash(pip install:*)",
+      "Bash(tasklist:*)",
+      "Bash(taskkill:*)",
+      "Bash(powershell \"Get-Process python | Stop-Process -Force\")",
+      "Bash(dir:*)",
+      "Bash(nul)",
+      "Bash(tail:*)",
+      "Bash(timeout /t 5)",
+      "Bash(powershell:*)",
+      "Bash(python:*)",
+      "Bash(del dashboard_endpoints.py)",
+      "Bash(ls:*)",
+      "Bash(curl:*)",
+      "Bash(cmd /c run-dev.bat:*)",
+      "Bash(timeout /t 3)",
+      "Bash(timeout /t 10)",
+      "Bash(netstat:*)",
+      "Bash(powershel \"Stop-Process -Name python -Force\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
