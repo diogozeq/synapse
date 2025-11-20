@@ -1,11 +1,11 @@
-# GLOBAL SOLUTION 2025.2 - O FUTURO DO TRABALHO
-## FIAP - Análise e Desenvolvimento de Sistemas
+GLOBAL SOLUTION 2025.2 - O FUTURO DO TRABALHO
+
 
 **Integrante:** Diogo Zequini
 
 ---
 
-## 1. O QUE É O PROJETO (Resumo Sniper)
+## 1. O QUE É O PROJETO 
 
 A GS pediu uma solução para tornar o trabalho mais humano e sustentável. Minha resposta é o **Synapse**: uma **Universidade Corporativa Gamificada e Adaptativa**.
 
@@ -15,8 +15,7 @@ Se o colaborador está estressado, o ritmo diminui. Se tem alta performance em t
 
 ---
 
-## 2. DEMANDA vs. SOLUÇÃO (O "Bate-Bola")
-
+## 2. DEMANDA vs. SOLUÇÃO
 Aqui está exatamente como o Synapse atende cada ponto pedido no edital da Global Solution:
 
 | O que a GS pediu | Como eu resolvi no App |
@@ -29,7 +28,7 @@ Aqui está exatamente como o Synapse atende cada ponto pedido no edital da Globa
 
 ---
 
-## 3. CHECKLIST TÉCNICO (Disciplinas)
+## 3. CHECKLIST TÉCNICO
 
 Como apliquei cada matéria do curso na prática para viabilizar essa adaptação:
 
@@ -43,7 +42,7 @@ Como apliquei cada matéria do curso na prática para viabilizar essa adaptaçã
 
 ---
 
-## 4. RESULTADOS REAIS (Baseados em Dados)
+## 4. RESULTADOS REAIS
 
 Rodando os modelos com os dados do protótipo, validamos a eficácia da abordagem:
 
