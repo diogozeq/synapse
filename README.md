@@ -60,5 +60,6 @@ O Synapse prova que a tecnologia pode humanizar o ambiente corporativo. Ao criar
 
 ## LINKS
 
-*   **Vídeo (YouTube):** [INSIRA O LINK AQUI]
+*   **Vídeo (YouTube):** https://youtu.be/X3F2kU0okMs
 *   **GitHub (Privado):** https://github.com/diogozeq/synapse/
+
